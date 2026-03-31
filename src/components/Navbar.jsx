@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Menu, X, Phone, Mail } from 'lucide-react'
 import { asset } from '../utils/assetUrl'
 
@@ -7,6 +7,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
   const isHome = location.pathname === '/'
 
   useEffect(() => {
@@ -31,10 +32,13 @@ export default function Navbar() {
 
   const scrollToSection = (id) => {
     if (!isHome) {
-      window.location.href = `/#${id}`
-      return
+      navigate('/')
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+      }, 300)
+    } else {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
     }
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
     setMobileOpen(false)
   }
 
