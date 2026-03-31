@@ -624,7 +624,7 @@ export default function OrderPage() {
                   }
                 >
                   <label className="block text-sm font-medium text-warm-dark mb-1.5">
-                    Special Instructions / Dietary Notes
+                    Special Instructions
                   </label>
                   <textarea
                     value={order.notes}
