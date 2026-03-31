@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
+import { asset } from '../utils/assetUrl'
 
 export default function Hero() {
   return (
     <section className="relative min-h-[80vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden">
       <img
-        src="/hero-board.png"
+        src={asset('/hero-board.png')}
         alt="Picnic basket on a sunny day"
         className="absolute inset-0 w-full h-full object-cover object-center"
       />
@@ -13,7 +14,7 @@ export default function Hero() {
 
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto pb-12">
         <img
-          src="/logo-badge.png"
+          src={asset('/logo-badge.png')}
           alt="Picnic Social badge"
           className="w-24 md:w-32 mx-auto mb-6 brightness-0 invert drop-shadow-lg"
         />

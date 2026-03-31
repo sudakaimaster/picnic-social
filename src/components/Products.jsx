@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { asset } from '../utils/assetUrl'
 import {
   Heart,
   Users,
@@ -123,7 +124,7 @@ function ProductCard({ item }) {
       {item.image ? (
         <div className="h-64 sm:h-72 overflow-hidden">
           <img
-            src={item.image}
+            src={asset(item.image)}
             alt={item.name}
             className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
           />

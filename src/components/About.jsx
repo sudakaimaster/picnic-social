@@ -1,3 +1,5 @@
+import { asset } from '../utils/assetUrl'
+
 export default function About() {
   return (
     <section id="about" className="section-padding">
@@ -6,7 +8,7 @@ export default function About() {
           <div className="relative">
             <div className="aspect-[4/5] rounded-2xl shadow-rose-lg overflow-hidden">
               <img
-                src="/about-board.png"
+                src={asset('/about-board.png')}
                 alt="Picnic Social charcuterie close-up"
                 className="w-full h-full object-cover"
               />

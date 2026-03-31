@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, Phone, Mail } from 'lucide-react'
+import { asset } from '../utils/assetUrl'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -65,7 +66,7 @@ export default function Navbar() {
         <div className="container-custom flex items-center justify-between h-20">
         <Link to="/" className="flex-shrink-0">
           <img
-            src="/logo-script.png"
+            src={asset('/logo-script.png')}
             alt="Picnic Social"
             className={`h-10 md:h-12 w-auto transition-all duration-300 ${
               showDarkLogo ? '' : 'brightness-0 invert'

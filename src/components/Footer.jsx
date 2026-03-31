@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { MapPin, Phone, Mail, Instagram, Facebook } from 'lucide-react'
+import { asset } from '../utils/assetUrl'
 
 export default function Footer() {
   return (
@@ -8,7 +9,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
           <div className="lg:col-span-1">
             <img
-              src="/logo-script.png"
+              src={asset('/logo-script.png')}
               alt="Picnic Social"
               className="h-10 w-auto brightness-0 invert mb-4"
             />

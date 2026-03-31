@@ -1,3 +1,5 @@
+import { asset } from '../utils/assetUrl'
+
 const images = [
   { src: '/gallery-1.png', alt: 'Charcuterie board with pansies and white chocolate' },
   { src: '/gallery-2.png', alt: 'Happy New Year charcuterie tower' },
@@ -35,7 +37,7 @@ export default function Gallery() {
             >
               <div className="relative w-full aspect-square">
                 <img
-                  src={img.src}
+                  src={asset(img.src)}
                   alt={img.alt}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
