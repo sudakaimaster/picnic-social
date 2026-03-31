@@ -51,7 +51,7 @@ function Calendar({ selected, onSelect }) {
   today.setHours(0, 0, 0, 0)
 
   const minDate = new Date(today)
-  minDate.setDate(minDate.getDate() + 2)
+  minDate.setDate(minDate.getDate() + 1)
 
   const year = viewDate.getFullYear()
   const month = viewDate.getMonth()
