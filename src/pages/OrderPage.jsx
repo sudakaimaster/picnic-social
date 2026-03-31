@@ -50,7 +50,7 @@ function Calendar({ selected, onSelect }) {
   today.setHours(0, 0, 0, 0)
 
   const minDate = new Date(today)
-  minDate.setDate(minDate.getDate() + 1)
+  minDate.setDate(minDate.getDate() + 2)
 
   const startMonth = new Date(minDate.getFullYear(), minDate.getMonth(), 1)
   const [viewDate, setViewDate] = useState(startMonth)
@@ -137,7 +137,7 @@ function Calendar({ selected, onSelect }) {
       </div>
 
       <p className="text-xs text-warm-light mt-4 text-center">
-        Select your preferred date for pickup or delivery.
+        Orders require at least 48 hours advance notice.
       </p>
     </div>
   )
