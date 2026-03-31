@@ -151,6 +151,7 @@ export default function OrderPage() {
     phone: '',
     address: '',
     city: 'Windsor',
+    recipientName: '',
     notes: '',
   })
   const [submitted, setSubmitted] = useState(false)
@@ -205,6 +206,7 @@ export default function OrderPage() {
       timeslot: selectedSlot?.label || order.timeslot,
       deliveryMethod: order.deliveryMethod,
       name: order.name,
+      recipientName: order.recipientName || '',
       email: order.email,
       phone: order.phone,
       address: order.address,
@@ -525,9 +527,9 @@ export default function OrderPage() {
               </div>
 
               <div className="grid sm:grid-cols-2 gap-5">
-                <div className="sm:col-span-2">
+                <div>
                   <label className="block text-sm font-medium text-warm-dark mb-1.5">
-                    Full Name *
+                    Your Name *
                   </label>
                   <input
                     type="text"
@@ -536,6 +538,19 @@ export default function OrderPage() {
                     className="w-full px-4 py-3 rounded-xl border border-rose-200 focus:border-rose-500
                              focus:ring-2 focus:ring-rose-200 outline-none transition-all bg-cream"
                     placeholder="Your full name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-warm-dark mb-1.5">
+                    Recipient Name
+                  </label>
+                  <input
+                    type="text"
+                    value={order.recipientName}
+                    onChange={(e) => updateOrder({ recipientName: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-rose-200 focus:border-rose-500
+                             focus:ring-2 focus:ring-rose-200 outline-none transition-all bg-cream"
+                    placeholder="Leave blank if same as above"
                   />
                 </div>
                 <div>
@@ -699,6 +714,11 @@ export default function OrderPage() {
                     <span className="text-sm font-medium">Contact</span>
                   </div>
                   <p className="font-medium">{order.name}</p>
+                  {order.recipientName && (
+                    <p className="text-warm-gray text-sm">
+                      Recipient: {order.recipientName}
+                    </p>
+                  )}
                   <p className="text-warm-gray text-sm">
                     {order.email} &middot; {order.phone}
                   </p>

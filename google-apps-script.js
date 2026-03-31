@@ -64,13 +64,14 @@ function writeToSheet(data) {
       'Time Slot',
       'Delivery Method',
       'Customer Name',
+      'Recipient Name',
       'Email',
       'Phone',
       'Address',
       'City',
       'Special Notes',
     ]);
-    sheet.getRange(1, 1, 1, 13).setFontWeight('bold');
+    sheet.getRange(1, 1, 1, 14).setFontWeight('bold');
   }
 
   sheet.appendRow([
@@ -82,6 +83,7 @@ function writeToSheet(data) {
     data.timeslot || '',
     data.deliveryMethod || '',
     data.name || '',
+    data.recipientName || '',
     data.email || '',
     data.phone || '',
     data.address || '',
@@ -107,7 +109,7 @@ Delivery:        ${data.deliveryMethod === 'delivery' ? 'Delivery' : 'Pickup'}
 
 CUSTOMER INFO
 ─────────────────────────────
-Name:            ${data.name}
+Name:            ${data.name}${data.recipientName ? `\nRecipient:       ${data.recipientName}` : ''}
 Email:           ${data.email}
 Phone:           ${data.phone}
 ${data.deliveryMethod === 'delivery' ? `Address:         ${data.address}, ${data.city}` : ''}
@@ -132,6 +134,7 @@ ${data.notes ? `SPECIAL NOTES\n────────────────�
 
       <tr><td colspan="2" style="padding: 16px 0 6px; font-weight: bold; font-size: 16px; border-bottom: 2px solid #e8c8b8;">Customer Info</td></tr>
       <tr><td style="padding: 8px 0; color: #8a7060;">Name</td><td style="padding: 8px 0; font-weight: 600;">${data.name}</td></tr>
+      ${data.recipientName ? `<tr><td style="padding: 8px 0; color: #8a7060;">Recipient</td><td style="padding: 8px 0; font-weight: 600;">${data.recipientName}</td></tr>` : ''}
       <tr><td style="padding: 8px 0; color: #8a7060;">Email</td><td style="padding: 8px 0;"><a href="mailto:${data.email}" style="color: #c4705a;">${data.email}</a></td></tr>
       <tr><td style="padding: 8px 0; color: #8a7060;">Phone</td><td style="padding: 8px 0;"><a href="tel:${data.phone}" style="color: #c4705a;">${data.phone}</a></td></tr>
       ${data.deliveryMethod === 'delivery' ? `<tr><td style="padding: 8px 0; color: #8a7060;">Address</td><td style="padding: 8px 0;">${data.address}, ${data.city}</td></tr>` : ''}
