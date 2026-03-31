@@ -46,12 +46,14 @@ const TIME_SLOTS = [
 const STEPS = ['Select Box', 'Date & Time', 'Your Details', 'Review']
 
 function Calendar({ selected, onSelect }) {
-  const [viewDate, setViewDate] = useState(new Date())
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
   const minDate = new Date(today)
   minDate.setDate(minDate.getDate() + 1)
+
+  const startMonth = new Date(minDate.getFullYear(), minDate.getMonth(), 1)
+  const [viewDate, setViewDate] = useState(startMonth)
 
   const year = viewDate.getFullYear()
   const month = viewDate.getMonth()
@@ -62,10 +64,15 @@ function Calendar({ selected, onSelect }) {
     year: 'numeric',
   })
 
-  const prevMonth = () => setViewDate(new Date(year, month - 1, 1))
-  const nextMonth = () => setViewDate(new Date(year, month + 1, 1))
+  const canGoPrev =
+    year > startMonth.getFullYear() ||
+    (year === startMonth.getFullYear() && month > startMonth.getMonth())
 
-  const canGoPrev = new Date(year, month, 1) > today
+  const prevMonth = () => {
+    const prev = new Date(year, month - 1, 1)
+    if (prev >= startMonth) setViewDate(prev)
+  }
+  const nextMonth = () => setViewDate(new Date(year, month + 1, 1))
 
   const days = []
   for (let i = 0; i < firstDayOfWeek; i++) days.push(null)
@@ -130,7 +137,7 @@ function Calendar({ selected, onSelect }) {
       </div>
 
       <p className="text-xs text-warm-light mt-4 text-center">
-        Orders require at least 48 hours advance notice.
+        Select your preferred date for pickup or delivery.
       </p>
     </div>
   )
