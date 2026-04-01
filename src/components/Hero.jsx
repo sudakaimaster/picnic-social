@@ -23,7 +23,7 @@ export default function Hero() {
           <br />
           <span className="italic text-gold-light">Delicious.</span>
           <br />
-          Communal.
+          Shared.
         </h1>
         <p className="text-white/80 text-base md:text-xl max-w-2xl mx-auto mb-6 font-light leading-relaxed">
           Let us create an unforgettable food experience for you. Stunning
