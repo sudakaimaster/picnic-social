@@ -45,7 +45,7 @@ export default function About() {
             <div className="mt-8 flex items-center gap-8">
               <div>
                 <p className="font-display text-3xl font-bold text-rose-500">
-                  500+
+                  2,500+
                 </p>
                 <p className="text-warm-gray text-sm">Boxes Delivered</p>
               </div>
