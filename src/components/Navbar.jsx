@@ -72,7 +72,7 @@ export default function Navbar() {
           <img
             src={asset('/logo-script.png')}
             alt="Picnic Social"
-            className={`h-10 md:h-12 w-auto transition-all duration-300 ${
+            className={`h-14 md:h-12 w-auto transition-all duration-300 ${
               showDarkLogo ? '' : 'brightness-0 invert'
             }`}
           />
