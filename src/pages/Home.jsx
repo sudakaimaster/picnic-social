@@ -1,4 +1,5 @@
 import Hero from '../components/Hero'
+import BloomBundles from '../components/BloomBundles'
 import Products from '../components/Products'
 import HowItWorks from '../components/HowItWorks'
 import About from '../components/About'
@@ -9,6 +10,7 @@ export default function Home() {
   return (
     <main>
       <Hero />
+      <BloomBundles />
       <Products />
       <HowItWorks />
       <About />

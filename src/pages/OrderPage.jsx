@@ -36,6 +36,7 @@ const BOX_OPTIONS = [
   { id: 'fruit', name: 'Fruit Platter', serves: null, price: 'From $65', numericPrice: 65, icon: Citrus, gradient: 'from-cream-dark to-gold-light' },
   { id: 'celebration', name: 'Celebration Tray', serves: null, price: '$140', numericPrice: 140, icon: Gift, gradient: 'from-rose-100 to-rose-200' },
   { id: 'watermelon', name: 'Watermelon Cake & Platter', serves: null, price: '$250', numericPrice: 250, icon: Cake, gradient: 'from-rose-200 to-rose-300' },
+  { id: 'bloom', name: 'Bloom Bundle', serves: null, price: 'From $95', numericPrice: 95, icon: Heart, gradient: 'from-rose-300 to-rose-500', seasonal: true },
 ]
 
 const TIME_SLOTS = [
@@ -462,9 +463,14 @@ export default function OrderPage() {
                         <div className="flex-1 min-w-0">
                           <h3 className="font-display text-sm font-semibold truncate">
                             {box.name}
+                            {box.seasonal && (
+                              <span className="ml-1.5 text-[10px] font-bold uppercase tracking-wide bg-rose-500 text-white px-1.5 py-0.5 rounded-full align-middle">
+                                Seasonal
+                              </span>
+                            )}
                           </h3>
                           <p className="text-warm-light text-xs">
-                            {box.serves ? `Serves ${box.serves}` : 'Specialty'}
+                            {box.serves ? `Serves ${box.serves}` : box.seasonal ? 'Mother\'s Day · Order by May 8' : 'Specialty'}
                           </p>
                         </div>
                         <span className="font-display text-sm font-bold text-rose-600 whitespace-nowrap">
