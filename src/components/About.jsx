@@ -6,7 +6,7 @@ export default function About() {
       <div className="container-custom">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div className="relative">
-            <div className="aspect-square rounded-2xl shadow-rose-lg overflow-hidden">
+            <div className="aspect-[3/4] rounded-2xl shadow-rose-lg overflow-hidden">
               <img
                 src={asset('/about-board.png')}
                 alt="Picnic Social charcuterie close-up"
