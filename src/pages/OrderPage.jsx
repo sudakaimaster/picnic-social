@@ -455,28 +455,26 @@ export default function OrderPage() {
                             : 'border-rose-100 bg-cream'
                         }`}
                     >
-                      <div className="flex items-center gap-3 mb-3">
+                      <div className="text-center mb-3">
                         <div
-                          className={`w-10 h-10 rounded-full bg-gradient-to-br ${box.gradient} flex items-center justify-center flex-shrink-0`}
+                          className={`w-10 h-10 rounded-full bg-gradient-to-br ${box.gradient} flex items-center justify-center mx-auto mb-2`}
                         >
                           <Icon className="w-5 h-5 text-white" />
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-display text-sm font-semibold truncate">
-                            {box.name}
-                            {box.seasonal && (
-                              <span className="ml-1.5 text-[10px] font-bold uppercase tracking-wide bg-rose-500 text-white px-1.5 py-0.5 rounded-full align-middle">
-                                Seasonal
-                              </span>
-                            )}
-                          </h3>
-                          <p className="text-warm-light text-xs">
-                            {box.serves ? `Serves ${box.serves}` : box.seasonal ? 'Mother\'s Day · Order by May 8' : 'Specialty'}
-                          </p>
-                        </div>
-                        <span className="font-display text-sm font-bold text-rose-600 whitespace-nowrap">
+                        <h3 className="font-display text-sm font-semibold leading-tight">
+                          {box.name}
+                        </h3>
+                        {box.seasonal && (
+                          <span className="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-rose-500 text-white px-1.5 py-0.5 rounded-full">
+                            Seasonal
+                          </span>
+                        )}
+                        <p className="text-warm-light text-xs mt-0.5">
+                          {box.serves ? `Serves ${box.serves}` : box.seasonal ? 'Mother\'s Day · Order by May 8' : 'Specialty'}
+                        </p>
+                        <p className="font-display text-sm font-bold text-rose-600 mt-1">
                           {box.price}
-                        </span>
+                        </p>
                       </div>
                       <div className="flex items-center justify-center gap-3">
                         <button
