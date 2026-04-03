@@ -20,19 +20,22 @@ import {
   Truck,
   Store,
   Loader2,
+  Plus,
+  Minus,
+  ShoppingBag,
 } from 'lucide-react'
 import { APPS_SCRIPT_URL } from '../config'
 
 const BOX_OPTIONS = [
-  { id: 'personal', name: 'Petite Box', serves: '1', price: '$35', icon: Heart, gradient: 'from-cream-dark to-rose-100' },
-  { id: 'duo', name: 'Duo Box', serves: '2', price: '$55', icon: Users, gradient: 'from-rose-100 to-cream-dark' },
-  { id: 'classic', name: 'Classic Box', serves: '3', price: '$70', icon: UsersRound, gradient: 'from-cream-dark to-rose-200' },
-  { id: 'grand', name: 'Grand Box', serves: '4–5', price: '$95', icon: Crown, gradient: 'from-rose-100 to-rose-200' },
-  { id: 'party', name: 'Party Box', serves: '6', price: '$115', icon: PartyPopper, gradient: 'from-rose-200 to-rose-300' },
-  { id: 'custom', name: 'Custom Board', serves: '10+', price: 'From $200', icon: Sparkles, gradient: 'from-gold-light to-gold' },
-  { id: 'fruit', name: 'Fruit Platter', serves: null, price: 'From $65', icon: Citrus, gradient: 'from-cream-dark to-gold-light' },
-  { id: 'celebration', name: 'Celebration Tray', serves: null, price: '$140', icon: Gift, gradient: 'from-rose-100 to-rose-200' },
-  { id: 'watermelon', name: 'Watermelon Cake & Platter', serves: null, price: '$250', icon: Cake, gradient: 'from-rose-200 to-rose-300' },
+  { id: 'personal', name: 'Petite Box', serves: '1', price: '$35', numericPrice: 35, icon: Heart, gradient: 'from-cream-dark to-rose-100' },
+  { id: 'duo', name: 'Duo Box', serves: '2', price: '$55', numericPrice: 55, icon: Users, gradient: 'from-rose-100 to-cream-dark' },
+  { id: 'classic', name: 'Classic Box', serves: '3', price: '$70', numericPrice: 70, icon: UsersRound, gradient: 'from-cream-dark to-rose-200' },
+  { id: 'grand', name: 'Grand Box', serves: '4–5', price: '$95', numericPrice: 95, icon: Crown, gradient: 'from-rose-100 to-rose-200' },
+  { id: 'party', name: 'Party Box', serves: '6', price: '$115', numericPrice: 115, icon: PartyPopper, gradient: 'from-rose-200 to-rose-300' },
+  { id: 'custom', name: 'Custom Board', serves: '10+', price: 'From $200', numericPrice: 200, icon: Sparkles, gradient: 'from-gold-light to-gold' },
+  { id: 'fruit', name: 'Fruit Platter', serves: null, price: 'From $65', numericPrice: 65, icon: Citrus, gradient: 'from-cream-dark to-gold-light' },
+  { id: 'celebration', name: 'Celebration Tray', serves: null, price: '$140', numericPrice: 140, icon: Gift, gradient: 'from-rose-100 to-rose-200' },
+  { id: 'watermelon', name: 'Watermelon Cake & Platter', serves: null, price: '$250', numericPrice: 250, icon: Cake, gradient: 'from-rose-200 to-rose-300' },
 ]
 
 const TIME_SLOTS = [
@@ -148,8 +151,12 @@ export default function OrderPage() {
   const preselectedBox = searchParams.get('box')
 
   const [step, setStep] = useState(0)
+
+  const initialCart = {}
+  if (preselectedBox) initialCart[preselectedBox] = 1
+
   const [order, setOrder] = useState({
-    box: preselectedBox || '',
+    cart: initialCart,
     date: null,
     timeslot: '',
     deliveryMethod: 'delivery',
@@ -169,10 +176,38 @@ export default function OrderPage() {
   const updateOrder = (fields) =>
     setOrder((prev) => ({ ...prev, ...fields }))
 
+  const updateCart = (itemId, delta) => {
+    setOrder((prev) => {
+      const newCart = { ...prev.cart }
+      const current = newCart[itemId] || 0
+      const next = current + delta
+      if (next <= 0) {
+        delete newCart[itemId]
+      } else {
+        newCart[itemId] = next
+      }
+      return { ...prev, cart: newCart }
+    })
+  }
+
+  const cartItems = useMemo(() =>
+    Object.entries(order.cart)
+      .map(([id, qty]) => ({ ...BOX_OPTIONS.find((b) => b.id === id), qty }))
+      .filter((item) => item.id),
+    [order.cart]
+  )
+
+  const cartTotal = useMemo(() =>
+    cartItems.reduce((sum, item) => sum + item.numericPrice * item.qty, 0),
+    [cartItems]
+  )
+
+  const hasFromPrices = cartItems.some((item) => item.price.startsWith('From'))
+
   const canProceed = useMemo(() => {
     switch (step) {
       case 0:
-        return !!order.box
+        return cartItems.length > 0
       case 1:
         return !!order.date && !!order.timeslot
       case 2:
@@ -187,21 +222,24 @@ export default function OrderPage() {
       default:
         return false
     }
-  }, [step, order])
+  }, [step, order, cartItems])
 
   const handleSubmit = async () => {
     setSubmitting(true)
     setSubmitError('')
 
-    const selectedBox = BOX_OPTIONS.find((b) => b.id === order.box)
     const selectedSlot = TIME_SLOTS.find((s) => s.id === order.timeslot)
     const num = `PS-${Date.now().toString(36).toUpperCase()}`
     setOrderNumber(num)
 
+    const itemsSummary = cartItems
+      .map((item) => `${item.name} x${item.qty} (${item.price} ea)`)
+      .join(', ')
+
     const payload = {
       orderNumber: num,
-      box: selectedBox?.name || order.box,
-      price: selectedBox?.price || '',
+      items: itemsSummary,
+      total: `${hasFromPrices ? 'From ' : ''}$${cartTotal}`,
       date: order.date
         ? order.date.toLocaleDateString('en-US', {
             weekday: 'long',
@@ -264,7 +302,6 @@ export default function OrderPage() {
     }
   }
 
-  const selectedBoxData = BOX_OPTIONS.find((b) => b.id === order.box)
   const selectedSlotData = TIME_SLOTS.find((s) => s.id === order.timeslot)
 
   if (submitted) {
@@ -283,8 +320,7 @@ export default function OrderPage() {
             </p>
           )}
           <p className="text-warm-gray text-lg mb-2">
-            Thank you, {order.name}! We&apos;ve received your order for the{' '}
-            <strong>{selectedBoxData?.name}</strong>.
+            Thank you, {order.name}! We&apos;ve received your order.
           </p>
           <p className="text-warm-gray mb-8">
             We&apos;ll be in touch at <strong>ps.picnic.social@gmail.com</strong> to
@@ -295,9 +331,14 @@ export default function OrderPage() {
               Order Summary
             </h3>
             <div className="space-y-2 text-sm text-warm-gray">
-              <p>
-                <span className="font-medium text-warm-dark">Box:</span>{' '}
-                {selectedBoxData?.name} — {selectedBoxData?.price}
+              {cartItems.map((item) => (
+                <p key={item.id}>
+                  <span className="font-medium text-warm-dark">{item.name}</span>{' '}
+                  x{item.qty} — {item.price} ea
+                </p>
+              ))}
+              <p className="font-semibold text-warm-dark text-base pt-1">
+                Total: {hasFromPrices ? 'From ' : ''}${cartTotal}
               </p>
               <p>
                 <span className="font-medium text-warm-dark">Date:</span>{' '}
@@ -393,53 +434,88 @@ export default function OrderPage() {
           {step === 0 && (
             <div>
               <h2 className="font-display text-2xl font-semibold mb-2">
-                Choose Your Box
+                Build Your Order
               </h2>
               <p className="text-warm-gray mb-5">
-                Select the perfect option for your occasion.
+                Add one or more items to your order.
               </p>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {BOX_OPTIONS.map((box) => {
                   const Icon = box.icon
-                  const isActive = order.box === box.id
+                  const qty = order.cart[box.id] || 0
                   return (
-                    <button
+                    <div
                       key={box.id}
-                      onClick={() => updateOrder({ box: box.id })}
-                      className={`text-left rounded-xl p-4 border-2 transition-all duration-300
+                      className={`rounded-xl p-4 border-2 transition-all duration-300
                         ${
-                          isActive
+                          qty > 0
                             ? 'border-rose-500 bg-rose-50 shadow-rose'
-                            : 'border-rose-100 hover:border-rose-300 bg-cream'
+                            : 'border-rose-100 bg-cream'
                         }`}
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 mb-3">
                         <div
                           className={`w-10 h-10 rounded-full bg-gradient-to-br ${box.gradient} flex items-center justify-center flex-shrink-0`}
                         >
                           <Icon className="w-5 h-5 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2">
-                            <h3 className="font-display text-sm font-semibold truncate">
-                              {box.name}
-                            </h3>
-                            <span className="font-display text-sm font-bold text-rose-600 whitespace-nowrap">
-                              {box.price}
-                            </span>
-                          </div>
+                          <h3 className="font-display text-sm font-semibold truncate">
+                            {box.name}
+                          </h3>
                           <p className="text-warm-light text-xs">
                             {box.serves ? `Serves ${box.serves}` : 'Specialty'}
                           </p>
                         </div>
-                        {isActive && (
-                          <Check className="w-5 h-5 text-rose-500 flex-shrink-0" />
-                        )}
+                        <span className="font-display text-sm font-bold text-rose-600 whitespace-nowrap">
+                          {box.price}
+                        </span>
                       </div>
-                    </button>
+                      <div className="flex items-center justify-center gap-3">
+                        <button
+                          onClick={() => updateCart(box.id, -1)}
+                          disabled={qty === 0}
+                          className="w-8 h-8 rounded-full border border-rose-200 flex items-center justify-center
+                                     hover:bg-rose-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <Minus className="w-4 h-4 text-rose-600" />
+                        </button>
+                        <span className="w-8 text-center font-semibold text-warm-dark">{qty}</span>
+                        <button
+                          onClick={() => updateCart(box.id, 1)}
+                          className="w-8 h-8 rounded-full border border-rose-200 flex items-center justify-center
+                                     hover:bg-rose-100 transition-colors"
+                        >
+                          <Plus className="w-4 h-4 text-rose-600" />
+                        </button>
+                      </div>
+                    </div>
                   )
                 })}
               </div>
+
+              {cartItems.length > 0 && (
+                <div className="mt-5 p-4 rounded-xl bg-rose-50 border border-rose-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <ShoppingBag className="w-4 h-4 text-rose-500" />
+                    <span className="font-medium text-warm-dark text-sm">Your Order</span>
+                  </div>
+                  <div className="space-y-1 text-sm text-warm-gray">
+                    {cartItems.map((item) => (
+                      <div key={item.id} className="flex justify-between">
+                        <span>{item.name} x{item.qty}</span>
+                        <span className="font-medium text-warm-dark">
+                          ${item.numericPrice * item.qty}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border-t border-rose-200 mt-2 pt-2 flex justify-between font-semibold text-warm-dark">
+                    <span>{hasFromPrices ? 'Estimated Total' : 'Total'}</span>
+                    <span>${cartTotal}</span>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -649,29 +725,36 @@ export default function OrderPage() {
               </p>
 
               <div className="space-y-3">
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-rose-50 border border-rose-100">
-                  {selectedBoxData && (
-                    <>
-                      <div
-                        className={`w-14 h-14 rounded-full bg-gradient-to-br ${selectedBoxData.gradient} flex items-center justify-center flex-shrink-0`}
-                      >
-                        <selectedBoxData.icon className="w-7 h-7 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-display text-lg font-semibold">
-                            {selectedBoxData.name}
-                          </h3>
-                          <span className="font-display text-lg font-bold text-rose-600">
-                            {selectedBoxData.price}
+                <div className="p-4 rounded-xl bg-rose-50 border border-rose-100">
+                  <div className="flex items-center gap-2 text-rose-400 mb-3">
+                    <ShoppingBag className="w-4 h-4" />
+                    <span className="text-sm font-medium">Items</span>
+                  </div>
+                  <div className="space-y-2">
+                    {cartItems.map((item) => {
+                      const Icon = item.icon
+                      return (
+                        <div key={item.id} className="flex items-center gap-3">
+                          <div
+                            className={`w-10 h-10 rounded-full bg-gradient-to-br ${item.gradient} flex items-center justify-center flex-shrink-0`}
+                          >
+                            <Icon className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium text-sm">{item.name}</p>
+                            <p className="text-warm-gray text-xs">Qty: {item.qty} &middot; {item.price} ea</p>
+                          </div>
+                          <span className="font-semibold text-warm-dark">
+                            ${item.numericPrice * item.qty}
                           </span>
                         </div>
-                        <p className="text-warm-gray text-sm">
-                          {selectedBoxData.serves ? `Serves ${selectedBoxData.serves}` : 'Specialty'}
-                        </p>
-                      </div>
-                    </>
-                  )}
+                      )
+                    })}
+                  </div>
+                  <div className="border-t border-rose-200 mt-3 pt-2 flex justify-between font-bold text-warm-dark">
+                    <span>{hasFromPrices ? 'Estimated Total' : 'Total'}</span>
+                    <span>${cartTotal}</span>
+                  </div>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-3">

@@ -58,8 +58,8 @@ function writeToSheet(data) {
     sheet.appendRow([
       'Order Date',
       'Order Number',
-      'Product',
-      'Price',
+      'Items',
+      'Total',
       'Event Date',
       'Time Slot',
       'Delivery Method',
@@ -77,8 +77,8 @@ function writeToSheet(data) {
   sheet.appendRow([
     new Date().toLocaleString('en-US', { timeZone: 'America/Toronto' }),
     data.orderNumber || '',
-    data.box || '',
-    data.price || '',
+    data.items || data.box || '',
+    data.total || data.price || '',
     data.date || '',
     data.timeslot || '',
     data.deliveryMethod || '',
@@ -93,7 +93,7 @@ function writeToSheet(data) {
 }
 
 function sendEmails(data) {
-  const subject = `🧺 New Order — ${data.box} (${data.orderNumber})`;
+  const subject = `🧺 New Order — ${data.orderNumber}`;
 
   const body = `
 New order received for Picnic Social!
@@ -101,8 +101,8 @@ New order received for Picnic Social!
 ORDER DETAILS
 ─────────────────────────────
 Order Number:    ${data.orderNumber}
-Product:         ${data.box}
-Price:           ${data.price}
+Items:           ${data.items || data.box}
+Total:           ${data.total || data.price}
 Event Date:      ${data.date}
 Time Slot:       ${data.timeslot}
 Delivery:        ${data.deliveryMethod === 'delivery' ? 'Delivery' : 'Pickup'}
@@ -126,8 +126,8 @@ ${data.notes ? `SPECIAL NOTES\n────────────────�
     <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #3b2018;">
       <tr><td colspan="2" style="padding: 12px 0 6px; font-weight: bold; font-size: 16px; border-bottom: 2px solid #e8c8b8;">Order Details</td></tr>
       <tr><td style="padding: 8px 0; color: #8a7060; width: 140px;">Order Number</td><td style="padding: 8px 0; font-weight: 600;">${data.orderNumber}</td></tr>
-      <tr><td style="padding: 8px 0; color: #8a7060;">Product</td><td style="padding: 8px 0; font-weight: 600;">${data.box}</td></tr>
-      <tr><td style="padding: 8px 0; color: #8a7060;">Price</td><td style="padding: 8px 0; font-weight: 600;">${data.price}</td></tr>
+      <tr><td style="padding: 8px 0; color: #8a7060;">Items</td><td style="padding: 8px 0; font-weight: 600;">${data.items || data.box}</td></tr>
+      <tr><td style="padding: 8px 0; color: #8a7060;">Total</td><td style="padding: 8px 0; font-weight: 600;">${data.total || data.price}</td></tr>
       <tr><td style="padding: 8px 0; color: #8a7060;">Event Date</td><td style="padding: 8px 0;">${data.date}</td></tr>
       <tr><td style="padding: 8px 0; color: #8a7060;">Time Slot</td><td style="padding: 8px 0;">${data.timeslot}</td></tr>
       <tr><td style="padding: 8px 0; color: #8a7060;">Delivery</td><td style="padding: 8px 0;">${data.deliveryMethod === 'delivery' ? '🚗 Delivery' : '🏪 Pickup'}</td></tr>
@@ -161,8 +161,8 @@ ${data.notes ? `SPECIAL NOTES\n────────────────�
 function testSetup() {
   const testData = {
     orderNumber: 'PS-TEST-001',
-    box: 'Classic Box',
-    price: '$70',
+    items: 'Classic Box x2, Fruit Platter x1',
+    total: '$205',
     date: 'March 30, 2026',
     timeslot: '11:00 AM – 1:00 PM',
     deliveryMethod: 'delivery',
