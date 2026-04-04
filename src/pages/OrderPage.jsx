@@ -32,7 +32,7 @@ const BOX_OPTIONS = [
   { id: 'personal', name: 'Petite Box', serves: '1', price: '$35', numericPrice: 35, icon: Heart, gradient: 'from-cream-dark to-rose-100' },
   { id: 'duo', name: 'Duo Box', serves: '2', price: '$55', numericPrice: 55, icon: Users, gradient: 'from-rose-100 to-cream-dark' },
   { id: 'classic', name: 'Classic Box', serves: '3', price: '$70', numericPrice: 70, icon: UsersRound, gradient: 'from-cream-dark to-rose-200' },
-  { id: 'grand', name: 'Grand Box', serves: '4–5', price: '$95', numericPrice: 95, icon: Crown, gradient: 'from-rose-100 to-rose-200' },
+  { id: 'grand', name: 'Grand Box', serves: '4', price: '$95', numericPrice: 95, icon: Crown, gradient: 'from-rose-100 to-rose-200' },
   { id: 'party', name: 'Party Box', serves: '6', price: '$115', numericPrice: 115, icon: PartyPopper, gradient: 'from-rose-200 to-rose-300' },
   { id: 'custom', name: 'Custom Board', serves: '10+', price: 'From $200', numericPrice: 200, icon: Sparkles, gradient: 'from-gold-light to-gold' },
   { id: 'fruit', name: 'Fruit Platter', serves: null, price: 'From $65', numericPrice: 65, icon: Citrus, gradient: 'from-cream-dark to-gold-light' },
