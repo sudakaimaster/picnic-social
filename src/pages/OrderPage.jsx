@@ -820,7 +820,7 @@ export default function OrderPage() {
                     rows={3}
                     className="w-full px-4 py-3 rounded-xl border border-rose-200 focus:border-rose-500
                              focus:ring-2 focus:ring-rose-200 outline-none transition-all bg-cream resize-none"
-                    placeholder="Allergies, preferences, special requests..."
+                    placeholder="Special requests or instructions..."
                   />
                 </div>
               </div>
