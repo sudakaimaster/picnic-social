@@ -23,6 +23,8 @@ import {
   Plus,
   Minus,
   ShoppingBag,
+  Flower2,
+  Wine,
 } from 'lucide-react'
 import { APPS_SCRIPT_URL } from '../config'
 
@@ -39,6 +41,14 @@ const BOX_OPTIONS = [
   { id: 'bloom-sm', name: 'Bloom Bundle (Small)', serves: null, price: '$95', numericPrice: 95, icon: Heart, gradient: 'from-rose-300 to-rose-500', seasonal: true },
   { id: 'bloom-lg', name: 'Bloom Bundle (Large)', serves: null, price: '$155', numericPrice: 155, icon: Heart, gradient: 'from-rose-400 to-rose-600', seasonal: true },
 ]
+
+const ADD_ONS = [
+  { id: 'flowers', name: 'Fresh Flowers', price: 50, icon: Flower2, gradient: 'from-rose-300 to-rose-500' },
+  { id: 'wine-red', name: 'Wine (Red)', price: 30, icon: Wine, gradient: 'from-rose-700 to-rose-900' },
+  { id: 'wine-white', name: 'Wine (White)', price: 30, icon: Wine, gradient: 'from-gold-light to-gold' },
+]
+
+const DELIVERY_FEE = 15
 
 const TIME_SLOTS = [
   { id: '9-11', label: '9:00 AM – 11:00 AM' },
@@ -159,6 +169,7 @@ export default function OrderPage() {
 
   const [order, setOrder] = useState({
     cart: initialCart,
+    addOns: {},
     date: null,
     timeslot: '',
     deliveryMethod: 'delivery',
@@ -192,6 +203,18 @@ export default function OrderPage() {
     })
   }
 
+  const toggleAddOn = (addonId) => {
+    setOrder((prev) => {
+      const newAddOns = { ...prev.addOns }
+      if (newAddOns[addonId]) {
+        delete newAddOns[addonId]
+      } else {
+        newAddOns[addonId] = 1
+      }
+      return { ...prev, addOns: newAddOns }
+    })
+  }
+
   const cartItems = useMemo(() =>
     Object.entries(order.cart)
       .map(([id, qty]) => ({ ...BOX_OPTIONS.find((b) => b.id === id), qty }))
@@ -199,10 +222,26 @@ export default function OrderPage() {
     [order.cart]
   )
 
-  const cartTotal = useMemo(() =>
+  const selectedAddOns = useMemo(() =>
+    Object.keys(order.addOns)
+      .map((id) => ADD_ONS.find((a) => a.id === id))
+      .filter(Boolean),
+    [order.addOns]
+  )
+
+  const addOnsTotal = useMemo(() =>
+    selectedAddOns.reduce((sum, a) => sum + a.price, 0),
+    [selectedAddOns]
+  )
+
+  const deliveryFee = order.deliveryMethod === 'delivery' ? DELIVERY_FEE : 0
+
+  const itemsSubtotal = useMemo(() =>
     cartItems.reduce((sum, item) => sum + item.numericPrice * item.qty, 0),
     [cartItems]
   )
+
+  const cartTotal = itemsSubtotal + addOnsTotal + deliveryFee
 
   const hasFromPrices = cartItems.some((item) => item.price.startsWith('From'))
 
@@ -238,9 +277,15 @@ export default function OrderPage() {
       .map((item) => `${item.name} x${item.qty} (${item.price} ea)`)
       .join(', ')
 
+    const addOnsSummary = selectedAddOns
+      .map((a) => `${a.name} ($${a.price})`)
+      .join(', ')
+
     const payload = {
       orderNumber: num,
       items: itemsSummary,
+      addOns: addOnsSummary || 'None',
+      deliveryFee: deliveryFee > 0 ? `$${deliveryFee}` : 'N/A',
       total: `${hasFromPrices ? 'From ' : ''}$${cartTotal}`,
       date: order.date
         ? order.date.toLocaleDateString('en-US', {
@@ -339,6 +384,18 @@ export default function OrderPage() {
                   x{item.qty} — {item.price} ea
                 </p>
               ))}
+              {selectedAddOns.length > 0 && selectedAddOns.map((addon) => (
+                <p key={addon.id}>
+                  <span className="font-medium text-warm-dark">{addon.name}</span>{' '}
+                  — +${addon.price}
+                </p>
+              ))}
+              {deliveryFee > 0 && (
+                <p>
+                  <span className="font-medium text-warm-dark">Delivery Fee</span>{' '}
+                  — +${deliveryFee}
+                </p>
+              )}
               <p className="font-semibold text-warm-dark text-base pt-1">
                 Total: {hasFromPrices ? 'From ' : ''}${cartTotal}
               </p>
@@ -499,6 +556,41 @@ export default function OrderPage() {
                 })}
               </div>
 
+              {/* Add-Ons */}
+              <div className="mt-6">
+                <h3 className="font-display text-lg font-semibold mb-1">Add-Ons</h3>
+                <p className="text-warm-gray text-sm mb-3">Make it extra special.</p>
+                <div className="grid sm:grid-cols-3 gap-3">
+                  {ADD_ONS.map((addon) => {
+                    const Icon = addon.icon
+                    const selected = !!order.addOns[addon.id]
+                    return (
+                      <button
+                        key={addon.id}
+                        onClick={() => toggleAddOn(addon.id)}
+                        className={`rounded-xl p-4 border-2 transition-all duration-300 text-center
+                          ${selected
+                            ? 'border-rose-500 bg-rose-50 shadow-rose'
+                            : 'border-rose-100 bg-cream hover:border-rose-300'
+                          }`}
+                      >
+                        <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${addon.gradient} flex items-center justify-center mx-auto mb-2`}>
+                          <Icon className="w-5 h-5 text-white" />
+                        </div>
+                        <h4 className="font-display text-sm font-semibold">{addon.name}</h4>
+                        <p className="font-display text-sm font-bold text-rose-600 mt-1">+${addon.price}</p>
+                        {selected && (
+                          <span className="inline-flex items-center gap-1 mt-2 text-xs text-rose-600 font-medium">
+                            <Check className="w-3 h-3" /> Added
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Order Summary */}
               {cartItems.length > 0 && (
                 <div className="mt-5 p-4 rounded-xl bg-rose-50 border border-rose-100">
                   <div className="flex items-center gap-2 mb-3">
@@ -514,11 +606,20 @@ export default function OrderPage() {
                         </span>
                       </div>
                     ))}
+                    {selectedAddOns.map((addon) => (
+                      <div key={addon.id} className="flex justify-between">
+                        <span>{addon.name}</span>
+                        <span className="font-medium text-warm-dark">+${addon.price}</span>
+                      </div>
+                    ))}
                   </div>
                   <div className="border-t border-rose-200 mt-2 pt-2 flex justify-between font-semibold text-warm-dark">
                     <span>{hasFromPrices ? 'Estimated Total' : 'Total'}</span>
-                    <span>${cartTotal}</span>
+                    <span>${itemsSubtotal + addOnsTotal}</span>
                   </div>
+                  <p className="text-xs text-warm-light mt-1">
+                    Delivery is an additional $15 depending on address.
+                  </p>
                 </div>
               )}
             </div>
@@ -590,27 +691,33 @@ export default function OrderPage() {
               <div className="flex gap-4 mb-8">
                 <button
                   onClick={() => updateOrder({ deliveryMethod: 'delivery' })}
-                  className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-xl border-2 transition-all
+                  className={`flex-1 flex flex-col items-center justify-center gap-1 py-4 rounded-xl border-2 transition-all
                     ${
                       order.deliveryMethod === 'delivery'
                         ? 'border-rose-500 bg-rose-50'
                         : 'border-rose-100 hover:border-rose-300'
                     }`}
                 >
-                  <Truck className="w-5 h-5" />
-                  <span className="font-medium">Delivery</span>
+                  <div className="flex items-center gap-2">
+                    <Truck className="w-5 h-5" />
+                    <span className="font-medium">Delivery</span>
+                  </div>
+                  <span className="text-xs text-rose-500 font-medium">+ $15 delivery fee</span>
                 </button>
                 <button
                   onClick={() => updateOrder({ deliveryMethod: 'pickup' })}
-                  className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-xl border-2 transition-all
+                  className={`flex-1 flex flex-col items-center justify-center gap-1 py-4 rounded-xl border-2 transition-all
                     ${
                       order.deliveryMethod === 'pickup'
                         ? 'border-rose-500 bg-rose-50'
                         : 'border-rose-100 hover:border-rose-300'
                     }`}
                 >
-                  <Store className="w-5 h-5" />
-                  <span className="font-medium">Pickup</span>
+                  <div className="flex items-center gap-2">
+                    <Store className="w-5 h-5" />
+                    <span className="font-medium">Pickup</span>
+                  </div>
+                  <span className="text-xs text-green-600 font-medium">Free</span>
                 </button>
               </div>
 
@@ -756,7 +863,27 @@ export default function OrderPage() {
                       )
                     })}
                   </div>
-                  <div className="border-t border-rose-200 mt-3 pt-2 flex justify-between font-bold text-warm-dark">
+                  {selectedAddOns.length > 0 && (
+                    <div className="border-t border-rose-200 mt-3 pt-2 space-y-1">
+                      <p className="text-xs font-medium text-warm-light uppercase tracking-wide">Add-Ons</p>
+                      {selectedAddOns.map((addon) => (
+                        <div key={addon.id} className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${addon.gradient} flex items-center justify-center flex-shrink-0`}>
+                            <addon.icon className="w-4 h-4 text-white" />
+                          </div>
+                          <span className="flex-1 text-sm">{addon.name}</span>
+                          <span className="font-semibold text-warm-dark text-sm">+${addon.price}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {deliveryFee > 0 && (
+                    <div className="border-t border-rose-200 mt-2 pt-2 flex justify-between text-sm text-warm-gray">
+                      <span>Delivery Fee</span>
+                      <span className="font-medium text-warm-dark">+${deliveryFee}</span>
+                    </div>
+                  )}
+                  <div className={`${deliveryFee > 0 || selectedAddOns.length > 0 ? 'mt-2 pt-2' : 'border-t border-rose-200 mt-3 pt-2'} flex justify-between font-bold text-warm-dark ${deliveryFee === 0 && selectedAddOns.length === 0 ? 'border-t border-rose-200' : ''}`}>
                     <span>{hasFromPrices ? 'Estimated Total' : 'Total'}</span>
                     <span>${cartTotal}</span>
                   </div>
