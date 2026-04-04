@@ -2,7 +2,7 @@ import { asset } from '../utils/assetUrl'
 
 const images = [
   { src: '/gallery-1.png', alt: 'Charcuterie board with pansies and white chocolate' },
-  { src: '/gallery-2.png', alt: 'Happy New Year charcuterie tower' },
+  { src: '/gallery-2.png', alt: 'Charcuterie boxes with edible flowers and salami roses' },
   { src: '/gallery-3.png', alt: 'Exotic fruit platter with dragon fruit' },
   { src: '/gallery-10.png', alt: 'Live edge board with grapes and salami roses' },
   { src: '/gallery-5.png', alt: 'Personal charcuterie box with honey' },
