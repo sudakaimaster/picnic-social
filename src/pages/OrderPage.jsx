@@ -37,7 +37,7 @@ const BOX_OPTIONS = [
   { id: 'fruit', name: 'Fruit Platter', serves: null, price: 'From $65', numericPrice: 65, icon: Citrus, gradient: 'from-cream-dark to-gold-light' },
   { id: 'watermelon', name: 'Watermelon Cake & Platter', serves: null, price: '$250', numericPrice: 250, icon: Cake, gradient: 'from-rose-200 to-rose-300' },
   { id: 'bloom-sm', name: 'Bloom Bundle (Small)', serves: null, price: '$95', numericPrice: 95, icon: Heart, gradient: 'from-rose-300 to-rose-500', seasonal: true },
-  { id: 'bloom-lg', name: 'Bloom Bundle (Large)', serves: null, price: '$155', numericPrice: 155, icon: Heart, gradient: 'from-rose-400 to-rose-600', seasonal: true },
+  { id: 'bloom-lg', name: 'Grand Bloom Bundle', serves: null, price: '$165', numericPrice: 165, icon: Heart, gradient: 'from-rose-400 to-rose-600', seasonal: true },
 ]
 
 const ADD_ONS = [
