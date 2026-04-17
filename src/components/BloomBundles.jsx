@@ -4,6 +4,7 @@ import { Flower2, ArrowRight } from 'lucide-react'
 import { asset } from '../utils/assetUrl'
 
 const slides = [
+  { src: '/bloom-bundles.png', alt: 'The Bloom Bundles — Mother\'s Day Collection' },
   { src: '/bloom-slide-1.png', alt: 'Grand Bloom Bundle — Mother\'s Day Collection' },
   { src: '/bloom-slide-2.png', alt: 'The Bloom Bundle — Mother\'s Day Collection' },
 ]
