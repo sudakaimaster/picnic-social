@@ -1,20 +1,56 @@
+import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { Flower2, ArrowRight } from 'lucide-react'
 import { asset } from '../utils/assetUrl'
 
+const slides = [
+  { src: '/bloom-slide-1.png', alt: 'Grand Bloom Bundle — Mother\'s Day Collection' },
+  { src: '/bloom-slide-2.png', alt: 'The Bloom Bundle — Mother\'s Day Collection' },
+]
+
 export default function BloomBundles() {
+  const [current, setCurrent] = useState(0)
+
+  const next = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % slides.length)
+  }, [])
+
+  useEffect(() => {
+    const timer = setInterval(next, 4000)
+    return () => clearInterval(timer)
+  }, [next])
+
   return (
     <section className="py-16 md:py-20 bg-gradient-to-b from-cream to-rose-50/50">
       <div className="container-custom">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center max-w-6xl mx-auto">
           <div className="relative rounded-2xl overflow-hidden shadow-rose-lg">
-            <img
-              src={asset('/bloom-bundles.png')}
-              alt="The Bloom Bundles — Mother's Day Collection"
-              className="w-full h-auto"
-            />
+            <div className="relative w-full">
+              {slides.map((slide, i) => (
+                <img
+                  key={i}
+                  src={asset(slide.src)}
+                  alt={slide.alt}
+                  className={`w-full h-auto transition-opacity duration-700 ease-in-out ${
+                    i === current ? 'opacity-100 relative' : 'opacity-0 absolute inset-0'
+                  }`}
+                />
+              ))}
+            </div>
             <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-rose-600 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full">
               Limited Quantities
+            </div>
+            {/* Dots */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    i === current ? 'bg-white scale-110' : 'bg-white/50 hover:bg-white/70'
+                  }`}
+                />
+              ))}
             </div>
           </div>
 
