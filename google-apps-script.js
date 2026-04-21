@@ -18,6 +18,9 @@ const SECRET = 'picnic-social-secret-2026-change-me-to-something-random';
 // IMPORTANT: Paste your deployed Web App URL here (ends in /exec)
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbybhbANFkXPXNcgxuT2vJCIauEvCfvPQTpSZEsRjK5PEnPD6zAr-5J5eEOeeST_RSpL/exec';
 
+// Where to redirect after approve/decline action
+const CONFIRMATION_URL = 'https://pspicnicsocial.ca/confirmed';
+
 const EMAIL_RECIPIENTS = [
   'kevin.thi.tran@gmail.com',
   'ps.picnic.social@gmail.com',
@@ -61,47 +64,35 @@ function doGet(e) {
   }
 
   if (!orderNumber || !token) {
-    return resultPage('Invalid request', 'Missing required parameters.', '#c4705a');
+    return redirectToConfirmation('error', orderNumber, 'Missing required parameters.');
   }
 
   if (token !== generateToken(orderNumber)) {
-    return resultPage('Invalid token', 'This approval link is no longer valid.', '#b54040');
+    return redirectToConfirmation('error', orderNumber, 'This approval link is no longer valid.');
   }
 
   const order = findOrderRow(orderNumber);
   if (!order) {
-    return resultPage('Order not found', 'We could not find an order with number ' + orderNumber + '.', '#b54040');
+    return redirectToConfirmation('error', orderNumber, 'Order not found.');
   }
 
   if (order.data.status === 'Approved' || order.data.status === 'Declined') {
-    return resultPage(
-      'Already ' + order.data.status.toLowerCase(),
-      'This order was already marked as ' + order.data.status + '. No further action needed.',
-      '#8a7060'
-    );
+    return redirectToConfirmation('already', orderNumber, 'This order was already ' + order.data.status.toLowerCase() + '.');
   }
 
   if (action === 'approve') {
     updateOrderStatus(order.row, 'Approved');
     sendApprovedEmail(order.data);
-    return resultPage(
-      'Order Approved',
-      'Order ' + orderNumber + ' has been approved. The customer has been notified.',
-      '#2f9e6d'
-    );
+    return redirectToConfirmation('approved', orderNumber, 'The customer has been notified.');
   }
 
   if (action === 'decline') {
     updateOrderStatus(order.row, 'Declined');
     sendDeclinedEmail(order.data);
-    return resultPage(
-      'Order Declined',
-      'Order ' + orderNumber + ' has been declined. The customer has been notified.',
-      '#b54040'
-    );
+    return redirectToConfirmation('declined', orderNumber, 'The customer has been notified.');
   }
 
-  return resultPage('Unknown action', 'Action must be "approve" or "decline".', '#c4705a');
+  return redirectToConfirmation('error', orderNumber, 'Unknown action.');
 }
 
 function doPost(e) {
@@ -217,17 +208,27 @@ function getActionUrl(action, orderNumber) {
 // Result HTML page
 // ============================================================
 
-function resultPage(title, message, color) {
+function redirectToConfirmation(status, orderNumber, message) {
+  const url = CONFIRMATION_URL +
+    '?status=' + encodeURIComponent(status) +
+    '&order=' + encodeURIComponent(orderNumber || '') +
+    '&message=' + encodeURIComponent(message || '');
+
   const html = `
-<div style="font-family: Georgia, serif; background: #fdf8f5; min-height: 100vh; padding: 40px 20px; text-align: center; color: #3b2018; box-sizing: border-box;">
-  <div style="max-width: 480px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 40px 28px; border: 1px solid #f0ddd5; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
-    <h1 style="color: ${color}; margin: 0 0 12px; font-size: 26px;">${title}</h1>
-    <p style="font-size: 15px; line-height: 1.6; color: #5a4a3e; margin: 0;">${message}</p>
-    <p style="margin-top: 24px; font-size: 12px; color: #8a7060;">Picnic Social &middot; pspicnicsocial.ca</p>
-  </div>
-</div>`.trim();
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta http-equiv="refresh" content="0; url=${url}">
+  <script>window.top.location.href = ${JSON.stringify(url)};</script>
+</head>
+<body style="font-family: Georgia, serif; background: #fdf8f5; padding: 40px; text-align: center; color: #3b2018;">
+  <p>Redirecting...</p>
+  <p><a href="${url}" target="_top">Click here if not redirected</a></p>
+</body>
+</html>`.trim();
+
   return HtmlService.createHtmlOutput(html)
-    .setTitle(title + ' — Picnic Social')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
