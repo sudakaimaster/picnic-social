@@ -219,28 +219,16 @@ function getActionUrl(action, orderNumber) {
 
 function resultPage(title, message, color) {
   const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${title} — Picnic Social</title>
-  <style>
-    body { font-family: Georgia, serif; background: #fdf8f5; margin: 0; padding: 40px 20px; text-align: center; color: #3b2018; }
-    .card { max-width: 480px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 40px 28px; border: 1px solid #f0ddd5; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-    h1 { color: ${color}; margin: 0 0 12px; font-size: 26px; }
-    p { font-size: 15px; line-height: 1.6; color: #5a4a3e; margin: 0; }
-    .footer { margin-top: 24px; font-size: 12px; color: #8a7060; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>${title}</h1>
-    <p>${message}</p>
-    <p class="footer">Picnic Social · pspicnicsocial.ca</p>
+<div style="font-family: Georgia, serif; background: #fdf8f5; min-height: 100vh; padding: 40px 20px; text-align: center; color: #3b2018; box-sizing: border-box;">
+  <div style="max-width: 480px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 40px 28px; border: 1px solid #f0ddd5; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+    <h1 style="color: ${color}; margin: 0 0 12px; font-size: 26px;">${title}</h1>
+    <p style="font-size: 15px; line-height: 1.6; color: #5a4a3e; margin: 0;">${message}</p>
+    <p style="margin-top: 24px; font-size: 12px; color: #8a7060;">Picnic Social &middot; pspicnicsocial.ca</p>
   </div>
-</body>
-</html>`.trim();
-  return HtmlService.createHtmlOutput(html);
+</div>`.trim();
+  return HtmlService.createHtmlOutput(html)
+    .setTitle(title + ' — Picnic Social')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 // ============================================================
