@@ -490,63 +490,63 @@ export default function OrderPage() {
         <div className="bg-white rounded-3xl border border-rose-100 shadow-sm p-5 md:p-8">
           {step === 0 && (
             <div>
-              <h2 className="font-display text-2xl font-semibold mb-2">
+              <h2 className="font-display text-xl md:text-2xl font-semibold mb-1">
                 Build Your Order
               </h2>
-              <p className="text-warm-gray mb-5">
+              <p className="text-warm-gray text-sm mb-3">
                 Add one or more items to your order.
               </p>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                 {BOX_OPTIONS.map((box) => {
                   const Icon = box.icon
                   const qty = order.cart[box.id] || 0
                   return (
                     <div
                       key={box.id}
-                      className={`rounded-xl p-4 border-2 transition-all duration-300
+                      className={`rounded-lg p-2.5 border-2 transition-all duration-300
                         ${
                           qty > 0
                             ? 'border-rose-500 bg-rose-50 shadow-rose'
                             : 'border-rose-100 bg-cream'
                         }`}
                     >
-                      <div className="text-center mb-3">
+                      <div className="text-center mb-2">
                         <div
-                          className={`w-10 h-10 rounded-full bg-gradient-to-br ${box.gradient} flex items-center justify-center mx-auto mb-2`}
+                          className={`w-8 h-8 rounded-full bg-gradient-to-br ${box.gradient} flex items-center justify-center mx-auto mb-1`}
                         >
-                          <Icon className="w-5 h-5 text-white" />
+                          <Icon className="w-4 h-4 text-white" />
                         </div>
-                        <h3 className="font-display text-sm font-semibold leading-tight">
+                        <h3 className="font-display text-xs font-semibold leading-tight">
                           {box.name}
                         </h3>
                         {box.seasonal && (
-                          <span className="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-rose-500 text-white px-1.5 py-0.5 rounded-full">
+                          <span className="inline-block mt-0.5 text-[9px] font-bold uppercase tracking-wide bg-rose-500 text-white px-1 py-0.5 rounded-full">
                             Seasonal
                           </span>
                         )}
-                        <p className="text-warm-light text-xs mt-0.5">
-                          {box.serves ? `Serves ${box.serves}` : box.seasonal ? 'Mother\'s Day · Order by May 8' : 'Specialty'}
+                        <p className="text-warm-light text-[10px] mt-0.5">
+                          {box.serves ? `Serves ${box.serves}` : box.seasonal ? "Mother's Day" : 'Specialty'}
                         </p>
-                        <p className="font-display text-sm font-bold text-rose-600 mt-1">
+                        <p className="font-display text-xs font-bold text-rose-600 mt-0.5">
                           {box.price}
                         </p>
                       </div>
-                      <div className="flex items-center justify-center gap-3">
+                      <div className="flex items-center justify-center gap-2">
                         <button
                           onClick={() => updateCart(box.id, -1)}
                           disabled={qty === 0}
-                          className="w-8 h-8 rounded-full border border-rose-200 flex items-center justify-center
+                          className="w-6 h-6 rounded-full border border-rose-200 flex items-center justify-center
                                      hover:bg-rose-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                         >
-                          <Minus className="w-4 h-4 text-rose-600" />
+                          <Minus className="w-3 h-3 text-rose-600" />
                         </button>
-                        <span className="w-8 text-center font-semibold text-warm-dark">{qty}</span>
+                        <span className="w-6 text-center font-semibold text-warm-dark text-sm">{qty}</span>
                         <button
                           onClick={() => updateCart(box.id, 1)}
-                          className="w-8 h-8 rounded-full border border-rose-200 flex items-center justify-center
+                          className="w-6 h-6 rounded-full border border-rose-200 flex items-center justify-center
                                      hover:bg-rose-100 transition-colors"
                         >
-                          <Plus className="w-4 h-4 text-rose-600" />
+                          <Plus className="w-3 h-3 text-rose-600" />
                         </button>
                       </div>
                     </div>
@@ -555,10 +555,10 @@ export default function OrderPage() {
               </div>
 
               {/* Add-Ons */}
-              <div className="mt-6">
-                <h3 className="font-display text-lg font-semibold mb-1">Add-Ons</h3>
-                <p className="text-warm-gray text-sm mb-3">Make it extra special.</p>
-                <div className="grid sm:grid-cols-3 gap-3">
+              <div className="mt-4">
+                <h3 className="font-display text-base font-semibold mb-1">Add-Ons</h3>
+                <p className="text-warm-gray text-xs mb-2">Make it extra special.</p>
+                <div className="grid grid-cols-3 gap-2">
                   {ADD_ONS.map((addon) => {
                     const Icon = addon.icon
                     const selected = !!order.addOns[addon.id]
@@ -566,20 +566,20 @@ export default function OrderPage() {
                       <button
                         key={addon.id}
                         onClick={() => toggleAddOn(addon.id)}
-                        className={`rounded-xl p-4 border-2 transition-all duration-300 text-center
+                        className={`rounded-lg p-2.5 border-2 transition-all duration-300 text-center
                           ${selected
                             ? 'border-rose-500 bg-rose-50 shadow-rose'
                             : 'border-rose-100 bg-cream hover:border-rose-300'
                           }`}
                       >
-                        <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${addon.gradient} flex items-center justify-center mx-auto mb-2`}>
-                          <Icon className="w-5 h-5 text-white" />
+                        <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${addon.gradient} flex items-center justify-center mx-auto mb-1`}>
+                          <Icon className="w-4 h-4 text-white" />
                         </div>
-                        <h4 className="font-display text-sm font-semibold">{addon.name}</h4>
-                        <p className="font-display text-sm font-bold text-rose-600 mt-1">+${addon.price}</p>
+                        <h4 className="font-display text-xs font-semibold leading-tight">{addon.name}</h4>
+                        <p className="font-display text-xs font-bold text-rose-600 mt-0.5">+${addon.price}</p>
                         {selected && (
-                          <span className="inline-flex items-center gap-1 mt-2 text-xs text-rose-600 font-medium">
-                            <Check className="w-3 h-3" /> Added
+                          <span className="inline-flex items-center gap-0.5 mt-1 text-[10px] text-rose-600 font-medium">
+                            <Check className="w-2.5 h-2.5" /> Added
                           </span>
                         )}
                       </button>
@@ -590,12 +590,12 @@ export default function OrderPage() {
 
               {/* Order Summary */}
               {cartItems.length > 0 && (
-                <div className="mt-5 p-4 rounded-xl bg-rose-50 border border-rose-100">
-                  <div className="flex items-center gap-2 mb-3">
+                <div className="mt-4 p-3 rounded-lg bg-rose-50 border border-rose-100">
+                  <div className="flex items-center gap-2 mb-2">
                     <ShoppingBag className="w-4 h-4 text-rose-500" />
                     <span className="font-medium text-warm-dark text-sm">Your Order</span>
                   </div>
-                  <div className="space-y-1 text-sm text-warm-gray">
+                  <div className="space-y-0.5 text-xs text-warm-gray">
                     {cartItems.map((item) => (
                       <div key={item.id} className="flex justify-between">
                         <span>{item.name} x{item.qty}</span>
@@ -611,11 +611,11 @@ export default function OrderPage() {
                       </div>
                     ))}
                   </div>
-                  <div className="border-t border-rose-200 mt-2 pt-2 flex justify-between font-semibold text-warm-dark">
+                  <div className="border-t border-rose-200 mt-1.5 pt-1.5 flex justify-between font-semibold text-warm-dark text-sm">
                     <span>{hasFromPrices ? 'Estimated Total' : 'Total'}</span>
                     <span>${itemsSubtotal + addOnsTotal}</span>
                   </div>
-                  <p className="text-xs text-warm-light mt-1">
+                  <p className="text-[11px] text-warm-light mt-1">
                     Delivery is an additional $15 depending on address.
                   </p>
                 </div>
@@ -953,7 +953,7 @@ export default function OrderPage() {
           )}
 
           {/* Navigation */}
-          <div className="flex items-center justify-between mt-10 pt-6 border-t border-rose-100">
+          <div className="flex items-center justify-between mt-6 pt-4 border-t border-rose-100">
             {step > 0 ? (
               <button
                 onClick={() => setStep((s) => s - 1)}
