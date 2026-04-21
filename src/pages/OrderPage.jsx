@@ -35,7 +35,6 @@ const BOX_OPTIONS = [
   { id: 'party', name: 'Party Box', serves: '6', price: '$115', numericPrice: 115, icon: PartyPopper, gradient: 'from-rose-200 to-rose-300' },
   { id: 'custom', name: 'Custom Board', serves: '10+', price: 'From $200', numericPrice: 200, icon: Sparkles, gradient: 'from-gold-light to-gold' },
   { id: 'fruit', name: 'Fruit Platter', serves: null, price: 'From $65', numericPrice: 65, icon: Citrus, gradient: 'from-cream-dark to-gold-light' },
-  { id: 'watermelon', name: 'Watermelon Cake & Platter', serves: null, price: '$250', numericPrice: 250, icon: Cake, gradient: 'from-rose-200 to-rose-300' },
   { id: 'bloom-sm', name: 'Bloom Bundle (Small)', serves: null, price: '$95', numericPrice: 95, icon: Heart, gradient: 'from-rose-300 to-rose-500', seasonal: true },
   { id: 'bloom-lg', name: 'Grand Bloom Bundle', serves: null, price: '$165', numericPrice: 165, icon: Heart, gradient: 'from-rose-400 to-rose-600', seasonal: true },
 ]
