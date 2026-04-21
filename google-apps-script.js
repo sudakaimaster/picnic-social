@@ -214,17 +214,33 @@ function redirectToConfirmation(status, orderNumber, message) {
     '&order=' + encodeURIComponent(orderNumber || '') +
     '&message=' + encodeURIComponent(message || '');
 
+  const safeUrl = url.replace(/"/g, '&quot;');
+  const jsonUrl = JSON.stringify(url);
+
   const html = `
 <!DOCTYPE html>
 <html>
 <head>
   <base target="_top">
-  <meta http-equiv="refresh" content="0; url=${url}">
-  <script>window.top.location.href = ${JSON.stringify(url)};</script>
+  <title>Redirecting...</title>
+  <script>
+    try { window.top.location.replace(${jsonUrl}); } catch (e) {}
+    try { window.parent.location.replace(${jsonUrl}); } catch (e) {}
+    try { window.location.replace(${jsonUrl}); } catch (e) {}
+    setTimeout(function () {
+      try { window.top.location.href = ${jsonUrl}; } catch (e) {}
+      window.location.href = ${jsonUrl};
+    }, 100);
+  </script>
+  <meta http-equiv="refresh" content="1; url=${safeUrl}">
+  <style>
+    body { font-family: Georgia, serif; background: #fdf8f5; padding: 60px 20px; text-align: center; color: #3b2018; margin: 0; }
+    a { color: #c4705a; font-weight: bold; font-size: 18px; text-decoration: none; padding: 12px 24px; border: 2px solid #c4705a; border-radius: 8px; display: inline-block; margin-top: 20px; }
+  </style>
 </head>
-<body style="font-family: Georgia, serif; background: #fdf8f5; padding: 40px; text-align: center; color: #3b2018;">
-  <p>Redirecting...</p>
-  <p><a href="${url}" target="_top">Click here if not redirected</a></p>
+<body>
+  <p>Redirecting to confirmation page...</p>
+  <a href="${safeUrl}" target="_top">Click here if not redirected</a>
 </body>
 </html>`.trim();
 
