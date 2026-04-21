@@ -15,6 +15,9 @@
 
 const SECRET = 'picnic-social-secret-2026-change-me-to-something-random';
 
+// IMPORTANT: Paste your deployed Web App URL here (ends in /exec)
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbybhbANFkXPXNcgxuT2vJCIauEvCfvPQTpSZEsRjK5PEnPD6zAr-5J5eEOeeST_RSpL/exec';
+
 const EMAIL_RECIPIENTS = [
   'kevin.thi.tran@gmail.com',
   'ps.picnic.social@gmail.com',
@@ -206,9 +209,8 @@ function generateToken(orderNumber) {
 }
 
 function getActionUrl(action, orderNumber) {
-  const base = ScriptApp.getService().getUrl();
   const token = generateToken(orderNumber);
-  return base + '?action=' + action + '&order=' + encodeURIComponent(orderNumber) + '&token=' + token;
+  return WEB_APP_URL + '?action=' + action + '&order=' + encodeURIComponent(orderNumber) + '&token=' + token;
 }
 
 // ============================================================
