@@ -21,6 +21,9 @@ const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbybhbANFkXPXNcgxuT2
 // Where to redirect after approve/decline action
 const CONFIRMATION_URL = 'https://pspicnicsocial.ca/confirmed';
 
+// Website URL where approve/decline buttons link to (avoids Google Drive auth issues)
+const ACTION_URL = 'https://pspicnicsocial.ca/action';
+
 const EMAIL_RECIPIENTS = [
   'kevin.thi.tran@gmail.com',
   'ps.picnic.social@gmail.com',
@@ -104,14 +107,66 @@ function doPost(e) {
       data = JSON.parse(e.postData.contents);
     }
 
+    if (data.type === 'action') {
+      return handleAction(data);
+    }
+
     writeToSheet(data);
     sendOwnerNotification(data);
     sendPendingEmail(data);
 
-    return HtmlService.createHtmlOutput('<p>OK</p>');
+    return jsonResponse({ ok: true });
   } catch (err) {
-    return HtmlService.createHtmlOutput('<p>Error: ' + err.toString() + '</p>');
+    return jsonResponse({ ok: false, error: err.toString() });
   }
+}
+
+function jsonResponse(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function handleAction(data) {
+  const action = data.action;
+  const orderNumber = data.order;
+  const token = data.token;
+
+  if (!orderNumber || !token) {
+    return jsonResponse({ ok: false, status: 'error', message: 'Missing parameters.' });
+  }
+
+  if (token !== generateToken(orderNumber)) {
+    return jsonResponse({ ok: false, status: 'error', message: 'Invalid token.' });
+  }
+
+  const order = findOrderRow(orderNumber);
+  if (!order) {
+    return jsonResponse({ ok: false, status: 'error', message: 'Order not found.' });
+  }
+
+  if (order.data.status === 'Approved' || order.data.status === 'Declined') {
+    return jsonResponse({
+      ok: true,
+      status: 'already',
+      previousStatus: order.data.status,
+      message: 'This order was already ' + order.data.status.toLowerCase() + '.',
+    });
+  }
+
+  if (action === 'approve') {
+    updateOrderStatus(order.row, 'Approved');
+    sendApprovedEmail(order.data);
+    return jsonResponse({ ok: true, status: 'approved', message: 'The customer has been notified.' });
+  }
+
+  if (action === 'decline') {
+    updateOrderStatus(order.row, 'Declined');
+    sendDeclinedEmail(order.data);
+    return jsonResponse({ ok: true, status: 'declined', message: 'The customer has been notified.' });
+  }
+
+  return jsonResponse({ ok: false, status: 'error', message: 'Unknown action.' });
 }
 
 // ============================================================
@@ -201,7 +256,7 @@ function generateToken(orderNumber) {
 
 function getActionUrl(action, orderNumber) {
   const token = generateToken(orderNumber);
-  return WEB_APP_URL + '?action=' + action + '&order=' + encodeURIComponent(orderNumber) + '&token=' + token;
+  return ACTION_URL + '?action=' + action + '&order=' + encodeURIComponent(orderNumber) + '&token=' + token;
 }
 
 // ============================================================
@@ -505,6 +560,7 @@ With love, The Picnic Social Team
 
   MailApp.sendEmail({
     to: data.email,
+    bcc: EMAIL_RECIPIENTS.join(','),
     subject: subject,
     body: body,
     htmlBody: htmlBody,
@@ -573,6 +629,7 @@ The Picnic Social Team
 
   MailApp.sendEmail({
     to: data.email,
+    bcc: EMAIL_RECIPIENTS.join(','),
     subject: subject,
     body: body,
     htmlBody: htmlBody,
