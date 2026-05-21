@@ -7,7 +7,7 @@ const testimonials = [
   },
   {
     name: 'Kristine',
-    text: "I ordered a charcuterie box for my mom for Mother's Day and it was amazing! She loved it — not only was it delicious — but it was different from the usual flowers, cake, etc. Outstanding job!",
+    text: "I ordered a charcuterie box for my mom and it was amazing! She loved it — not only was it delicious — but it was different from the usual flowers, cake, etc. Outstanding job!",
   },
   {
     name: 'Theresa',
