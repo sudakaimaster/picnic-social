@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import {
-  Heart,
   Users,
   UsersRound,
   Crown,
@@ -35,8 +34,6 @@ const BOX_OPTIONS = [
   { id: 'party', name: 'Party Box', serves: '6', price: '$115', numericPrice: 115, icon: PartyPopper, gradient: 'from-rose-200 to-rose-300' },
   { id: 'custom', name: 'Custom Board', serves: '10+', price: 'From $200', numericPrice: 200, icon: Sparkles, gradient: 'from-gold-light to-gold' },
   { id: 'fruit', name: 'Fruit Platter', serves: null, price: 'From $65', numericPrice: 65, icon: Citrus, gradient: 'from-cream-dark to-gold-light' },
-  { id: 'bloom-sm', name: 'Bloom Bundle (Small)', serves: null, price: '$95', numericPrice: 95, icon: Heart, gradient: 'from-rose-300 to-rose-500', seasonal: true },
-  { id: 'bloom-lg', name: 'Grand Bloom Bundle', serves: null, price: '$165', numericPrice: 165, icon: Heart, gradient: 'from-rose-400 to-rose-600', seasonal: true },
 ]
 
 const ADD_ONS = [
@@ -518,13 +515,8 @@ export default function OrderPage() {
                         <h3 className="font-display text-xs font-semibold leading-tight">
                           {box.name}
                         </h3>
-                        {box.seasonal && (
-                          <span className="inline-block mt-0.5 text-[9px] font-bold uppercase tracking-wide bg-rose-500 text-white px-1 py-0.5 rounded-full">
-                            Seasonal
-                          </span>
-                        )}
                         <p className="text-warm-light text-[10px] mt-0.5">
-                          {box.serves ? `Serves ${box.serves}` : box.seasonal ? "Mother's Day" : 'Specialty'}
+                          {box.serves ? `Serves ${box.serves}` : 'Specialty'}
                         </p>
                         <p className="font-display text-xs font-bold text-rose-600 mt-0.5">
                           {box.price}
