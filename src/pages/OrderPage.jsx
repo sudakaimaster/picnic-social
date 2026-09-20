@@ -52,6 +52,20 @@ const TIME_SLOTS = [
   { id: '5-7', label: '5:00 PM – 7:00 PM' },
 ]
 
+const WEEKDAY_SLOT_ID = '5-7'
+
+function isWeekend(date) {
+  if (!date) return false
+  const day = date.getDay()
+  return day === 0 || day === 6
+}
+
+function slotsForDate(date) {
+  if (!date) return []
+  if (isWeekend(date)) return TIME_SLOTS
+  return TIME_SLOTS.filter((slot) => slot.id === WEEKDAY_SLOT_ID)
+}
+
 const STEPS = ['Select Box', 'Date & Time', 'Your Details', 'Review']
 
 function Calendar({ selected, onSelect }) {
@@ -244,7 +258,10 @@ export default function OrderPage() {
       case 0:
         return cartItems.length > 0
       case 1:
-        return !!order.date && !!order.timeslot
+        return (
+          !!order.date &&
+          slotsForDate(order.date).some((slot) => slot.id === order.timeslot)
+        )
       case 2:
         return (
           order.name &&
@@ -263,7 +280,13 @@ export default function OrderPage() {
     setSubmitting(true)
     setSubmitError('')
 
-    const selectedSlot = TIME_SLOTS.find((s) => s.id === order.timeslot)
+    const availableSlots = slotsForDate(order.date)
+    const selectedSlot = availableSlots.find((s) => s.id === order.timeslot)
+    if (!selectedSlot) {
+      setSubmitError('Please choose an available time for that date.')
+      setSubmitting(false)
+      return
+    }
     const num = `PS-${Date.now().toString(36).toUpperCase()}`
     setOrderNumber(num)
 
@@ -632,7 +655,15 @@ export default function OrderPage() {
                   </div>
                   <Calendar
                     selected={order.date}
-                    onSelect={(date) => updateOrder({ date })}
+                    onSelect={(date) => {
+                      const stillValid = slotsForDate(date).some(
+                        (slot) => slot.id === order.timeslot
+                      )
+                      updateOrder({
+                        date,
+                        timeslot: stillValid ? order.timeslot : '',
+                      })
+                    }}
                   />
                 </div>
                 <div>
@@ -642,8 +673,18 @@ export default function OrderPage() {
                       Select Time Slot
                     </h3>
                   </div>
+                  {order.date && !isWeekend(order.date) && (
+                    <p className="text-sm text-warm-gray mb-3">
+                      Weekdays are 5:00–7:00 PM only.
+                    </p>
+                  )}
                   <div className="space-y-3">
-                    {TIME_SLOTS.map((slot) => (
+                    {!order.date && (
+                      <p className="text-sm text-warm-light px-1">
+                        Pick a date to see available times.
+                      </p>
+                    )}
+                    {slotsForDate(order.date).map((slot) => (
                       <button
                         key={slot.id}
                         onClick={() => updateOrder({ timeslot: slot.id })}
