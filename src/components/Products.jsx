@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { asset } from '../utils/assetUrl'
 import {
   Heart,
-  Users,
   UsersRound,
   Crown,
   PartyPopper,
@@ -23,17 +22,6 @@ const charcuterieBoxes = [
     icon: Heart,
     image: '/box-personal.png',
     gradient: 'from-cream-dark to-rose-100',
-  },
-  {
-    id: 'duo',
-    name: 'Duo Box',
-    serves: '2',
-    price: '$55',
-    description:
-      'Made for two. Perfect for date night, a cozy evening in, or a thoughtful surprise for someone you love.',
-    icon: Users,
-    image: '/box-duo.png',
-    gradient: 'from-rose-100 to-cream-dark',
   },
   {
     id: 'classic',

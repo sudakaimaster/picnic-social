@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import {
-  Users,
   UsersRound,
   Crown,
   PartyPopper,
@@ -28,7 +27,6 @@ import {
 import { APPS_SCRIPT_URL } from '../config'
 
 const BOX_OPTIONS = [
-  { id: 'duo', name: 'Duo Box', serves: '2', price: '$55', numericPrice: 55, icon: Users, gradient: 'from-rose-100 to-cream-dark' },
   { id: 'classic', name: 'Classic Box', serves: '3', price: '$70', numericPrice: 70, icon: UsersRound, gradient: 'from-cream-dark to-rose-200' },
   { id: 'grand', name: 'Grand Box', serves: '4', price: '$95', numericPrice: 95, icon: Crown, gradient: 'from-rose-100 to-rose-200' },
   { id: 'party', name: 'Party Box', serves: '6', price: '$115', numericPrice: 115, icon: PartyPopper, gradient: 'from-rose-200 to-rose-300' },
@@ -159,7 +157,9 @@ export default function OrderPage() {
   const [step, setStep] = useState(0)
 
   const initialCart = {}
-  if (preselectedBox) initialCart[preselectedBox] = 1
+  if (preselectedBox && BOX_OPTIONS.some((b) => b.id === preselectedBox)) {
+    initialCart[preselectedBox] = 1
+  }
 
   const [order, setOrder] = useState({
     cart: initialCart,
