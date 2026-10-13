@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { asset } from '../utils/assetUrl'
 import {
-  Heart,
   UsersRound,
   Crown,
   PartyPopper,
@@ -12,17 +11,6 @@ import {
 } from 'lucide-react'
 
 const charcuterieBoxes = [
-  {
-    id: 'personal',
-    name: 'Petite Box',
-    serves: '1',
-    price: '$35',
-    description:
-      'A perfectly portioned personal charcuterie box — ideal for treating yourself or gifting someone special.',
-    icon: Heart,
-    image: '/box-personal.png',
-    gradient: 'from-cream-dark to-rose-100',
-  },
   {
     id: 'classic',
     name: 'Classic Box',
